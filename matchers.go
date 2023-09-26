@@ -1,6 +1,7 @@
 package shiremock
 
 import (
+	"encoding/json"
 	"log"
 	"regexp"
 	"sync"
@@ -10,12 +11,14 @@ type StringMatcher interface {
 	Matches(str string) bool
 }
 
+// / You can use the NewRegexMatcher function to do the regex funkiness for you
 type RegexMatcher struct {
 	/// Compiled regex to match urls to
 	Regex *regexp.Regexp
-	Lock  sync.Mutex
+	lock  sync.Mutex
 }
 
+// / Compiles the regex and returns a regex matcher
 func NewRegexMatcher(regex string) (*RegexMatcher, error) {
 	re, err := regexp.Compile(regex)
 	if err != nil {
@@ -27,7 +30,16 @@ func NewRegexMatcher(regex string) (*RegexMatcher, error) {
 }
 
 func (matcher *RegexMatcher) Matches(str string) bool {
-	matcher.Lock.Lock()
-	defer matcher.Lock.Unlock()
+	matcher.lock.Lock()
+	defer matcher.lock.Unlock()
 	return matcher.Regex.MatchString(str)
+}
+
+type JsonMatcher struct {
+	ObjectToMatch any
+}
+
+func (matcher *JsonMatcher) Matches(str string) bool {
+	err := json.Unmarshal([]byte(str), &matcher.ObjectToMatch)
+	return err == nil
 }
