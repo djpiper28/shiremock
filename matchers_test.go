@@ -80,6 +80,16 @@ func Test_JsonMatcherMatchesProperly(t *testing.T) {
 	}
 }
 
+func Test_JsonMatcherMatches_Fail(t *testing.T) {
+	matcher := JsonMatcher{ObjectToMatch: PooPooTestObject{}}
+	result := matcher.Matches("poooooooo")
+
+	if result {
+		log.Println("The JSON object should not match:(")
+		t.Fail()
+	}
+}
+
 func Test_JsonMatcherWithAssertionsMatchesProperly(t *testing.T) {
 	assertionCalled := false
 	matcher := NewJsonMatcherWithAssertion[PooPooTestObject](func(obj PooPooTestObject) bool {
@@ -87,7 +97,7 @@ func Test_JsonMatcherWithAssertionsMatchesProperly(t *testing.T) {
 		assertionCalled = true
 		return true
 	})
-  log.Printf("Type is: %#v", matcher)
+	log.Printf("Type is: %#v", matcher)
 
 	result := matcher.Matches(`{
     "peepee": "testing 123"
@@ -100,6 +110,20 @@ func Test_JsonMatcherWithAssertionsMatchesProperly(t *testing.T) {
 
 	if !assertionCalled {
 		log.Println("Assertion func was not called")
+		t.Fail()
+	}
+}
+
+func Test_JsonMatcherWithAssertionsMatches_Fail(t *testing.T) {
+	matcher := NewJsonMatcherWithAssertion[PooPooTestObject](func(obj PooPooTestObject) bool {
+		t.Fail()
+		return true
+	})
+
+	result := matcher.Matches("turds innit mate")
+
+	if result {
+		log.Println("The JSON object should not have been matched :(")
 		t.Fail()
 	}
 }
