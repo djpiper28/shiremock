@@ -46,7 +46,7 @@ func Test_MockEntityRequestMatchUrl_Fail(t *testing.T) {
 func Test_MockEntityRequstMatchBody_Fail(t *testing.T) {
 	entity := MockEntity{Method: http.MethodGet, UrlMatcher: &StringMatcher{Str: "/test"}, BodyMatcher: &StringMatcher{Str: "test"}}
 
-	url, err := url.Parse("http://test.com/testing123")
+	url, err := url.Parse("http://test.com/test")
 	if err != nil {
 		log.Print("Cannot make mock url", err)
 		t.Fail()
