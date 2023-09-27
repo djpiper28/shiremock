@@ -22,6 +22,14 @@ func Test_RegexMatcherNew(t *testing.T) {
 	}
 }
 
+func Test_RegexMatcherNew_Fail(t *testing.T) {
+	_, err := NewRegexMatcher("(+")
+	if err == nil {
+		log.Print("(+ is an invalid regex so should fail")
+		t.Fail()
+	}
+}
+
 func Test_RegexMatcherMatchesRegexWithObjectReuse(t *testing.T) {
 	matcher, err := NewRegexMatcher("a{5}b+")
 	if err != nil {
