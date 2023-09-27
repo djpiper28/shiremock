@@ -21,8 +21,8 @@ type Response struct {
 type MockEntity struct {
 	/// Method type (GET/POST, etc...), see net/http for consts
 	Method      string
-	UrlMatcher  StringMatcher
-	BodyMatcher StringMatcher
+	UrlMatcher  Matcher
+	BodyMatcher Matcher
 	/// What to send back to the caller
 	Response Response
 }
