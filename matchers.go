@@ -12,11 +12,11 @@ type Matcher interface {
 }
 
 type StringMatcher struct {
-  Str string
+	Str string
 }
 
-func (matcher* StringMatcher) Matches(str string) bool {
-  return str == matcher.Str
+func (matcher *StringMatcher) Matches(str string) bool {
+	return str == matcher.Str
 }
 
 // / You can use the NewRegexMatcher function to do the regex funkiness for you
