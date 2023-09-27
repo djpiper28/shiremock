@@ -17,7 +17,7 @@ type Response struct {
 	Method string
 }
 
-// / A request to mock
+/// A request to mock
 type MockEntity struct {
 	/// Method type (GET/POST, etc...), see net/http for consts
 	Method      string
