@@ -6,24 +6,25 @@ import (
 	"net/http"
 )
 
+// The response for the mocked API call
 type Response struct {
-	/// Body
+	// Body
 	Body string
-	/// Headers for the response
+	// Headers for the response
 	Headers map[string]string
-	/// Response code, see net/http for consts
+	// Response code, see net/http for consts
 	Code int
-	/// Method type (GET/POST, etc...), see net/http for consts
+	// Method type (GET/POST, etc...), see net/http for consts
 	Method string
 }
 
-/// A request to mock
+// A request to mock
 type MockEntity struct {
-	/// Method type (GET/POST, etc...), see net/http for consts
+	// Method type (GET/POST, etc...), see net/http for consts
 	Method      string
 	UrlMatcher  Matcher
 	BodyMatcher Matcher
-	/// What to send back to the caller
+	// What to send back to the caller
 	Response Response
 }
 
@@ -38,6 +39,7 @@ Headers: %s`, req.Method,
 		req.Header)
 }
 
+// Tests if a HTTP request matches this entity's definition
 func (entity *MockEntity) MatchesHttpRequest(req *http.Request) bool {
 	printRequest(req)
 

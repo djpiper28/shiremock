@@ -69,13 +69,37 @@ type PooPooTestObject struct {
 }
 
 func Test_JsonMatcherMatchesProperly(t *testing.T) {
-	matcher := JsonMatcher{}
+	matcher := JsonMatcher{ObjectToMatch: PooPooTestObject{}}
 	result := matcher.Matches(`{
     "peepee": "testing 123"
   }`)
 
 	if !result {
 		log.Println("Cannot match the JSON object :(")
+		t.Fail()
+	}
+}
+
+func Test_JsonMatcherWithAssertionsMatchesProperly(t *testing.T) {
+	assertionCalled := false
+	matcher := NewJsonMatcherWithAssertion[PooPooTestObject](func(obj PooPooTestObject) bool {
+		log.Print("Assertion was called")
+		assertionCalled = true
+		return true
+	})
+  log.Printf("Type is: %#v", matcher)
+
+	result := matcher.Matches(`{
+    "peepee": "testing 123"
+  }`)
+
+	if !result {
+		log.Println("Cannot match the JSON object :(")
+		t.Fail()
+	}
+
+	if !assertionCalled {
+		log.Println("Assertion func was not called")
 		t.Fail()
 	}
 }

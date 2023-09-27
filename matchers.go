@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"regexp"
-	"sync"
 )
 
 type Matcher interface {
@@ -19,14 +18,13 @@ func (matcher *StringMatcher) Matches(str string) bool {
 	return str == matcher.Str
 }
 
-// / You can use the NewRegexMatcher function to do the regex funkiness for you
+// You can use the NewRegexMatcher function to do the regex funkiness for you
 type RegexMatcher struct {
-	/// Compiled regex to match urls to
+	// Compiled regex to match urls to
 	Regex *regexp.Regexp
-	lock  sync.Mutex
 }
 
-// / Compiles the regex and returns a regex matcher
+// Compiles the regex and returns a regex matcher
 func NewRegexMatcher(regex string) (*RegexMatcher, error) {
 	re, err := regexp.Compile(regex)
 	if err != nil {
@@ -38,8 +36,6 @@ func NewRegexMatcher(regex string) (*RegexMatcher, error) {
 }
 
 func (matcher *RegexMatcher) Matches(str string) bool {
-	matcher.lock.Lock()
-	defer matcher.lock.Unlock()
 	return matcher.Regex.MatchString(str)
 }
 
@@ -49,5 +45,34 @@ type JsonMatcher struct {
 
 func (matcher *JsonMatcher) Matches(str string) bool {
 	err := json.Unmarshal([]byte(str), &matcher.ObjectToMatch)
+	if err != nil {
+		log.Print("Cannot match json", err)
+	}
 	return err == nil
+}
+
+// Matches JSON then runs an assertion on it, use NewJsonMatcherWithAssertion to make an object
+type JsonMatcherWithAssertion struct {
+	objectToMatch any
+	assertion     func(jsonObject string) bool
+}
+
+func NewJsonMatcherWithAssertion[T any](assertionFunc func(jsonObject T) bool) *JsonMatcherWithAssertion {
+	ret := JsonMatcherWithAssertion{objectToMatch: *new(T),
+		assertion: func(jsonObj string) bool {
+			var objectToAssert T = *new(T)
+
+			err := json.Unmarshal([]byte(jsonObj), &objectToAssert)
+			if err != nil {
+				log.Print("Cannot match json", err)
+				return false
+			}
+
+			return assertionFunc(objectToAssert)
+		}}
+	return &ret
+}
+
+func (matcher *JsonMatcherWithAssertion) Matches(str string) bool {
+	return matcher.assertion(str)
 }
