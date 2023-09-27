@@ -27,7 +27,7 @@ func Test_MockEntityRequestMatchMethod_Fail(t *testing.T) {
 }
 
 func Test_MockEntityRequestMatchUrl_Fail(t *testing.T) {
-	entity := MockEntity{Method: http.MethodGet, UrlMatcher: StringMatcher{Str: "/test"}}
+	entity := MockEntity{Method: http.MethodGet, UrlMatcher: &StringMatcher{Str: "/test"}}
 
 	url, err := url.Parse("http://test.com/testing123")
 	if err != nil {
@@ -44,7 +44,7 @@ func Test_MockEntityRequestMatchUrl_Fail(t *testing.T) {
 }
 
 func Test_MockEntityRequstMatchBody_Fail(t *testing.T) {
-	entity := MockEntity{Method: http.MethodGet, UrlMatcher: StringMatcher{Str: "/test"}, BodyMatcher: StringMatcher{Str: "test"}}
+	entity := MockEntity{Method: http.MethodGet, UrlMatcher: &StringMatcher{Str: "/test"}, BodyMatcher: &StringMatcher{Str: "test"}}
 
 	url, err := url.Parse("http://test.com/testing123")
 	if err != nil {
@@ -63,7 +63,7 @@ func Test_MockEntityRequstMatchBody_Fail(t *testing.T) {
 }
 
 func Test_MockEntityRequstMatch_Pass(t *testing.T) {
-	entity := MockEntity{Method: http.MethodGet, UrlMatcher: StringMatcher{Str: "/test"}, BodyMatcher: StringMatcher{Str: "test"}}
+	entity := MockEntity{Method: http.MethodGet, UrlMatcher: &StringMatcher{Str: "/test"}, BodyMatcher: &StringMatcher{Str: "test"}}
 
 	url, err := url.Parse("http://test.com/test")
 	if err != nil {
