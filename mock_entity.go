@@ -32,7 +32,7 @@ func printRequest(req *http.Request) {
 Host: %s
 IP: %s
 Headers: %s`, req.Method,
-		req.URL,
+		req.URL.EscapedPath(),
 		req.Host,
 		req.RemoteAddr,
 		req.Header)
@@ -46,7 +46,7 @@ func (entity *MockEntity) MatchesHttpRequest(req *http.Request) bool {
 		return false
 	}
 
-	url := req.URL.String()
+	url := req.URL.EscapedPath()
 	if !entity.UrlMatcher.Matches(url) {
 		log.Printf("Incoming request has URL '%s', expected to match via '%#v'", url, entity.UrlMatcher)
 		return false
