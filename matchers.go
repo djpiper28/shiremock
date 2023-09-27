@@ -7,8 +7,16 @@ import (
 	"sync"
 )
 
-type StringMatcher interface {
+type Matcher interface {
 	Matches(str string) bool
+}
+
+type StringMatcher struct {
+  Str string
+}
+
+func (matcher* StringMatcher) Matches(str string) bool {
+  return str == matcher.Str
 }
 
 // / You can use the NewRegexMatcher function to do the regex funkiness for you

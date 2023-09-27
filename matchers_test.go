@@ -6,7 +6,7 @@ import (
 )
 
 func Test_RegexMatcherInterfaceMatch(_t *testing.T) {
-	var _ StringMatcher = &RegexMatcher{}
+	var _ Matcher = &RegexMatcher{}
 }
 
 func Test_RegexMatcherNew(t *testing.T) {
@@ -53,7 +53,7 @@ func Test_RegexMatcherMatchesRegex(t *testing.T) {
 }
 
 func Test_JsonMatcherDoesTheInterfaceThing(_ *testing.T) {
-	var _ StringMatcher = &JsonMatcher{}
+	var _ Matcher = &JsonMatcher{}
 }
 
 type PooPooTestObject struct {
@@ -68,6 +68,26 @@ func Test_JsonMatcherMatchesProperly(t *testing.T) {
 
 	if !result {
 		log.Println("Cannot match the JSON object :(")
+		t.Fail()
+	}
+}
+
+func Test_StringMatcherMatchesTheInterface(_ *testing.T) {
+	var _ Matcher = &StringMatcher{}
+}
+
+func Test_StringMatcherGood(t *testing.T) {
+	matcher := StringMatcher{Str: "test"}
+	if !matcher.Matches("test") {
+		log.Println("test does not match test, this is quite bad")
+		t.Fail()
+	}
+}
+
+func Test_StringMatcherBad(t *testing.T) {
+	matcher := StringMatcher{Str: "test123"}
+	if matcher.Matches("test") {
+		log.Println("test does match test123, this is quite bad")
 		t.Fail()
 	}
 }
