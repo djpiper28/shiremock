@@ -7,7 +7,6 @@ import (
 
 func Test_RegexMatcherInterfaceMatch(_t *testing.T) {
 	var _ Matcher = &RegexMatcher{}
-	log.SetFlags(log.Flags() | log.Lshortfile)
 }
 
 func Test_RegexMatcherNew(t *testing.T) {

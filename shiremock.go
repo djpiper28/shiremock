@@ -19,10 +19,13 @@ func (s *Shiremock) Start() error {
 	PrintSplashScreen()
 
 	log.SetFlags(log.LUTC | log.Lshortfile | log.Lmsgprefix)
-	log.Print("Starting Shiremock on url", s.BindUrl)
+	log.Print("Starting Shiremock on url ", s.BindUrl)
 
 	// Write a function to handle all http requests
-	http.ListenAndServe(s.BindUrl, s)
+	err := http.ListenAndServe(s.BindUrl, s)
+	if err != nil {
+		log.Print(err)
+	}
 
 	return errors.New("Shiremock server stopped")
 }
@@ -31,11 +34,11 @@ func (s *Shiremock) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Loop through all the mocks and find the first one that matches the request
 	for _, mock := range s.Mocks {
 		if mock.MatchesHttpRequest(r) {
+			w.WriteHeader(mock.Response.Code)
 			for key, value := range mock.Response.Headers {
 				w.Header().Set(key, value)
 			}
 			w.Write([]byte(mock.Response.Body))
-			w.WriteHeader(mock.Response.Code)
 			return
 		}
 	}
