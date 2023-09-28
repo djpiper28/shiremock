@@ -7,6 +7,7 @@ import (
 
 func Test_RegexMatcherInterfaceMatch(_t *testing.T) {
 	var _ Matcher = &RegexMatcher{}
+	log.SetFlags(log.Flags() | log.Lshortfile)
 }
 
 func Test_RegexMatcherNew(t *testing.T) {
@@ -69,7 +70,7 @@ type PooPooTestObject struct {
 }
 
 func Test_JsonMatcherMatchesProperly(t *testing.T) {
-	matcher := JsonMatcher{ObjectToMatch: PooPooTestObject{}}
+	matcher := NewJsonMatcher[PooPooTestObject]()
 	result := matcher.Matches(`{
     "peepee": "testing 123"
   }`)
@@ -81,7 +82,7 @@ func Test_JsonMatcherMatchesProperly(t *testing.T) {
 }
 
 func Test_JsonMatcherMatches_Fail(t *testing.T) {
-	matcher := JsonMatcher{ObjectToMatch: PooPooTestObject{}}
+	matcher := NewJsonMatcher[PooPooTestObject]()
 	result := matcher.Matches("poooooooo")
 
 	if result {
@@ -97,7 +98,6 @@ func Test_JsonMatcherWithAssertionsMatchesProperly(t *testing.T) {
 		assertionCalled = true
 		return true
 	})
-	log.Printf("Type is: %#v", matcher)
 
 	result := matcher.Matches(`{
     "peepee": "testing 123"
@@ -144,6 +144,31 @@ func Test_StringMatcherBad(t *testing.T) {
 	matcher := StringMatcher{Str: "test123"}
 	if matcher.Matches("test") {
 		log.Println("test does match test123, this is quite bad")
+		t.Fail()
+	}
+}
+
+type MyObject struct {
+	RequiredField string `json:"required_field" shiremock:"required"`
+	OptionalField string `json:"optional_field"`
+}
+
+func Test_RequiredJsonField_Pass(t *testing.T) {
+	matcher := NewJsonMatcher[MyObject]()
+	result := matcher.Matches(`{"optional_field": "value", "required_field": "value"}`)
+
+	if !result {
+		log.Print("Cannot match json")
+		t.Fail()
+	}
+}
+
+func Test_RequiredJsonField_Fail(t *testing.T) {
+	matcher := NewJsonMatcher[MyObject]()
+	result := matcher.Matches(`{"optional_field": "value"}`)
+
+	if result {
+		log.Print("JSON matched when it should not have")
 		t.Fail()
 	}
 }
