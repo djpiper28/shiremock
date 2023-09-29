@@ -14,7 +14,12 @@ func Test_ServerStart_Fail(t *testing.T) {
 	go s.Start()
 	time.Sleep(1)
 
-	err := s.Start()
+	var err error = nil
+	go func() {
+		err = s.Start()
+	}()
+
+	time.Sleep(1)
 	if err == nil {
 		log.Print("Test should have failed due to binding on the same port twice")
 		t.Fail()
