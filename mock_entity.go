@@ -18,7 +18,7 @@ type Response struct {
 	Method string
 }
 
-// A request to mock
+// A request to mock, you can use NewMockEntity to help you
 type MockEntity struct {
 	// Method type (GET/POST, etc...), see net/http for consts
 	Method      string
@@ -26,6 +26,15 @@ type MockEntity struct {
 	BodyMatcher Matcher
 	// What to send back to the caller
 	Response Response
+}
+
+// A helper to make a new mock entity so you don't forget any of the parts lol
+func NewMockEntity(method string, urlMatcher Matcher, bodymatcher Matcher, response Response) *MockEntity {
+	MockEntity := MockEntity{Method: method,
+		UrlMatcher:  urlMatcher,
+		BodyMatcher: bodymatcher,
+		Response:    response}
+	return &MockEntity
 }
 
 func printRequest(req *http.Request) {
